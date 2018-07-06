@@ -134,7 +134,7 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
                 onCanceled()
             }
             else -> {
-                onError()
+                onError(Error.PURCHASE_FAILURE)
             }
         }
 
@@ -145,7 +145,7 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
 
     override fun onBillingSetupFinished(responseCode: Int) {
         if (responseCode != BillingClient.BillingResponse.OK) {
-            onError()
+            onError(Error.SETUP_ERROR)
         }
     }
 
@@ -162,7 +162,7 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
             == BillingClient.BillingResponse.OK) {
             currentDonation = sku.sku
         } else {
-            onError()
+            onError(Error.FAILED_TO_START_PURCHASE_FLOW)
         }
     }
 
@@ -187,10 +187,10 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
 
                     epoxyController.setData(finalList)
                 } else {
-                    onError()
+                    onError(Error.SKUS_EMPTY)
                 }
             } else {
-                onError()
+                onError(Error.FAILED_TO_LOAD_SKUS)
             }
         }
     }
@@ -212,8 +212,8 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
         dismiss()
     }
 
-    private fun onError() {
-        callback?.onDonationError()
+    private fun onError(error: Error) {
+        callback?.onDonationError(error)
         arguments!!.getCharSequence(KEY_ERROR_MSG)?.let {
             Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
         }
@@ -245,7 +245,12 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
     interface Callback {
         fun onDonated(sku: String)
         fun onDonationCanceled()
-        fun onDonationError() // todo more meaningful errors
+        fun onDonationError(error: Error)
+    }
+
+    enum class Error {
+        SETUP_ERROR, CONNECTION_ERROR, SKUS_EMPTY,
+        FAILED_TO_LOAD_SKUS, FAILED_TO_START_PURCHASE_FLOW, PURCHASE_FAILURE, UNKNOWN
     }
 
     class Builder(private val context: Context) {

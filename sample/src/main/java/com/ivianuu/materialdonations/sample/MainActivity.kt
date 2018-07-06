@@ -41,8 +41,8 @@ class MainActivity : AppCompatActivity(), MaterialDonationsDialog.Callback {
         Log.d("testtt", "on donation canceled")
     }
 
-    override fun onDonationError() {
-        Log.d("testtt", "on donation error")
+    override fun onDonationError(error: MaterialDonationsDialog.Error) {
+        Log.d("testtt", "on donation error $error")
     }
 
     private fun initDebugBillingStuff() {
