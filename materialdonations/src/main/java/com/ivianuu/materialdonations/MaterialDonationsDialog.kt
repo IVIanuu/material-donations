@@ -24,6 +24,7 @@ import android.support.v4.app.DialogFragment
 import android.support.v4.app.FragmentManager
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import android.widget.Toast
 import com.afollestad.materialdialogs.DialogAction
 import com.afollestad.materialdialogs.MaterialDialog
 import com.airbnb.epoxy.EpoxyHolder
@@ -124,6 +125,10 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
         callback?.let {
             if (responseCode == BillingClient.BillingResponse.OK) {
                 if (purchases?.any { it.sku == currentDonation } == true) {
+                    arguments!!.getCharSequence(KEY_DONATED_MSG)?.let {
+                        Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                    }
+
                     it.onDonated(currentDonation!!)
                 } else {
                     it.onDonationError()
@@ -188,6 +193,7 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
 
         private const val KEY_TITLE = "title"
         private const val KEY_NEGATIVE_BUTTON_TEXT = "negative_button_text"
+        private const val KEY_DONATED_MSG = "donated_msg"
         private const val KEY_SKUS = "skus"
 
         private const val KEY_CURRENT_DONATION = "current_donation"
@@ -198,14 +204,15 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
     interface Callback {
         fun onDonated(sku: String)
         fun onDonationCanceled()
-        fun onDonationError()
+        fun onDonationError() // todo more meaningful errors
     }
 
     class Builder(private val context: Context) {
 
         private var title: CharSequence? = null
         private var negativeButtonText: CharSequence? = null
-
+        private var donatedMsg: CharSequence? = null
+        
         private val skus = mutableSetOf<String>()
 
         fun title(title: CharSequence): Builder {
@@ -224,6 +231,14 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
         fun negativeButtonTextRes(negativeButtonTextRes: Int) =
                 negativeButtonText(context.getString(negativeButtonTextRes))
 
+        fun donatedMsg(donatedMsg: CharSequence?): Builder {
+            this.donatedMsg = donatedMsg
+            return this
+        }
+
+        fun donatedMsgRes(donatedMsgRes: Int) =
+            donatedMsg(context.getString(donatedMsgRes))
+        
         fun addSkus(vararg skus: String): Builder {
             this.skus.addAll(skus)
             return this
@@ -239,6 +254,7 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
                 arguments = Bundle().apply {
                     putCharSequence(KEY_TITLE, this@Builder.title)
                     putCharSequence(KEY_NEGATIVE_BUTTON_TEXT, negativeButtonText)
+                    putCharSequence(KEY_DONATED_MSG, donatedMsg)
                     putStringArrayList(KEY_SKUS, ArrayList(skus))
                 }
             }

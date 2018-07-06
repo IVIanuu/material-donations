@@ -23,6 +23,7 @@ class MainActivity : AppCompatActivity(), MaterialDonationsDialog.Callback {
             MaterialDonationsDialog.newBuilder(this)
                 .title("Donate")
                 .negativeButtonText("Cancel")
+                .donatedMsg("Thanks for the donation!")
                 .addSkus("pizza", "kebab")
                 .show(supportFragmentManager)
         }
