@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/buildSrc/buildSrc.iml" filepath="$PROJECT_DIR$/buildSrc/buildSrc.iml" />
+      <module fileurl="file://$PROJECT_DIR$/material-donations.iml" filepath="$PROJECT_DIR$/material-donations.iml" />
+      <module fileurl="file://$PROJECT_DIR$/materialdonations/materialdonations.iml" filepath="$PROJECT_DIR$/materialdonations/materialdonations.iml" />
+      <module fileurl="file://$PROJECT_DIR$/materialdonations-billingx/materialdonations-billingx.iml" filepath="$PROJECT_DIR$/materialdonations-billingx/materialdonations-billingx.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sample/sample.iml" filepath="$PROJECT_DIR$/sample/sample.iml" />
+    </modules>
+  </component>
+</project>
