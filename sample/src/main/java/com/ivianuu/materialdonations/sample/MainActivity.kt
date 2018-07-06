@@ -1,17 +1,13 @@
 package com.ivianuu.materialdonations.sample
 
-import android.content.Context
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.android.billingclient.api.BillingClient
-import com.android.billingclient.api.PurchasesUpdatedListener
-import com.ivianuu.materialdonations.BillingClientFactory
 import com.ivianuu.materialdonations.MaterialDonationsDialog
 import com.ivianuu.materialdonations.MaterialDonationsPlugins
 import com.ivianuu.materialdonations.billingx.DebugBillingClientFactory
 import com.pixite.android.billingx.BillingStore
-import com.pixite.android.billingx.DebugBillingClient
 import com.pixite.android.billingx.SkuDetailsBuilder
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -22,6 +18,7 @@ class MainActivity : AppCompatActivity(), MaterialDonationsDialog.Callback {
         setContentView(R.layout.activity_main)
 
         val billingStore = BillingStore.defaultStore(this)
+        billingStore.clearProducts()
         billingStore.addProduct(
             SkuDetailsBuilder(
                 sku = "pizza", type = BillingClient.SkuType.INAPP,
@@ -40,6 +37,8 @@ class MainActivity : AppCompatActivity(), MaterialDonationsDialog.Callback {
 
         donate.setOnClickListener {
             MaterialDonationsDialog.newBuilder(this)
+                .title("Donate")
+                .negativeButtonText("Cancel")
                 .addSkus("pizza", "kebab")
                 .show(supportFragmentManager)
         }

@@ -40,7 +40,6 @@ class MaterialDonationsDialog : DialogFragment() {
 
     private var callback: Callback? = null
 
-
     private val purchasesUpdateListener =
         PurchasesUpdatedListener { responseCode, purchases ->
             callback?.let {
@@ -112,8 +111,14 @@ class MaterialDonationsDialog : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return MaterialDialog.Builder(requireContext())
-            .title(arguments!!.getString(KEY_TITLE) ?: "")
-            .negativeText(arguments!!.getString(KEY_NEGATIVE_BUTTON_TEXT) ?: "")
+            .title(
+                arguments!!.getString(KEY_TITLE)
+                        ?: getString(R.string.default_donation_dialog_title)
+            )
+            .negativeText(
+                arguments!!.getString(KEY_NEGATIVE_BUTTON_TEXT)
+                        ?: getString(R.string.default_donation_dialog_title)
+            )
             .onAny { _, which ->
                 when(which) {
                     DialogAction.NEGATIVE -> {
