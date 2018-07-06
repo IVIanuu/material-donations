@@ -24,6 +24,8 @@ class MainActivity : AppCompatActivity(), MaterialDonationsDialog.Callback {
                 .title("Donate")
                 .negativeButtonText("Cancel")
                 .donatedMsg("Thanks for the donation!")
+                .canceledMsg("Oh no canceled!")
+                .errorMsg("Something went wrong please try it again!")
                 .addSkus("pizza", "kebab")
                 .show(supportFragmentManager)
         }

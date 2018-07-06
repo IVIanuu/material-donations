@@ -47,6 +47,8 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
 
     private var currentDonation: String? = null
 
+    private var canceled = false
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         callback = activity as? Callback
@@ -111,7 +113,7 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
     }
 
     override fun onCancel(dialog: DialogInterface?) {
-        callback?.onDonationCanceled()
+        onCanceled()
         super.onCancel(dialog)
     }
 
@@ -122,29 +124,28 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
     }
 
     override fun onPurchasesUpdated(responseCode: Int, purchases: MutableList<Purchase>?) {
-        callback?.let {
-            if (responseCode == BillingClient.BillingResponse.OK) {
+        when (responseCode) {
+            BillingClient.BillingResponse.OK -> {
                 if (purchases?.any { it.sku == currentDonation } == true) {
-                    arguments!!.getCharSequence(KEY_DONATED_MSG)?.let {
-                        Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
-                    }
-
-                    it.onDonated(currentDonation!!)
-                } else {
-                    it.onDonationError()
+                    onDonated(currentDonation!!)
                 }
-            } else {
-                it.onDonationError()
+            }
+            BillingClient.BillingResponse.USER_CANCELED -> {
+                onCanceled()
+            }
+            else -> {
+                onError()
             }
         }
+
+        currentDonation = null
 
         dismiss()
     }
 
     override fun onBillingSetupFinished(responseCode: Int) {
         if (responseCode != BillingClient.BillingResponse.OK) {
-            callback?.onDonationError()
-            dismiss()
+            onError()
         }
     }
 
@@ -161,8 +162,7 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
             == BillingClient.BillingResponse.OK) {
             currentDonation = sku.sku
         } else {
-            callback?.onDonationError()
-            dismiss()
+            onError()
         }
     }
 
@@ -179,13 +179,37 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
                 if (skuDetailsList.isNotEmpty()) {
                     epoxyController.setData(skuDetailsList)
                 } else {
-                    callback?.onDonationError()
+                    onError()
                 }
             } else {
-                callback?.onDonationError()
-                dismiss()
+                onError()
             }
         }
+    }
+
+    private fun onDonated(sku: String) {
+        arguments!!.getCharSequence(KEY_DONATED_MSG)?.let {
+            Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+        }
+        callback?.onDonated(sku)
+    }
+
+    private fun onCanceled() {
+        if (canceled) return
+        canceled = true
+        arguments!!.getCharSequence(KEY_CANCELED_MSG)?.let {
+            Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+        }
+        callback?.onDonationCanceled()
+        dismiss()
+    }
+
+    private fun onError() {
+        callback?.onDonationError()
+        arguments!!.getCharSequence(KEY_ERROR_MSG)?.let {
+            Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+        }
+        dismiss()
     }
 
     companion object {
@@ -194,6 +218,8 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
         private const val KEY_TITLE = "title"
         private const val KEY_NEGATIVE_BUTTON_TEXT = "negative_button_text"
         private const val KEY_DONATED_MSG = "donated_msg"
+        private const val KEY_ERROR_MSG = "error_msg"
+        private const val KEY_CANCELED_MSG = "canceled_msg"
         private const val KEY_SKUS = "skus"
 
         private const val KEY_CURRENT_DONATION = "current_donation"
@@ -212,7 +238,9 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
         private var title: CharSequence? = null
         private var negativeButtonText: CharSequence? = null
         private var donatedMsg: CharSequence? = null
-        
+        private var errorMsg: CharSequence? = null
+        private var canceledMsg: CharSequence? = null
+
         private val skus = mutableSetOf<String>()
 
         fun title(title: CharSequence): Builder {
@@ -238,7 +266,23 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
 
         fun donatedMsgRes(donatedMsgRes: Int) =
             donatedMsg(context.getString(donatedMsgRes))
-        
+
+        fun errorMsg(errorMsg: CharSequence?): Builder {
+            this.errorMsg = errorMsg
+            return this
+        }
+
+        fun errorMsgRes(errorMsgRes: Int) =
+            errorMsg(context.getString(errorMsgRes))
+
+        fun canceledMsg(canceledMsg: CharSequence?): Builder {
+            this.canceledMsg = canceledMsg
+            return this
+        }
+
+        fun canceledMsgRes(canceledMsgRes: Int) =
+            canceledMsg(context.getString(canceledMsgRes))
+
         fun addSkus(vararg skus: String): Builder {
             this.skus.addAll(skus)
             return this
@@ -255,6 +299,8 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
                     putCharSequence(KEY_TITLE, this@Builder.title)
                     putCharSequence(KEY_NEGATIVE_BUTTON_TEXT, negativeButtonText)
                     putCharSequence(KEY_DONATED_MSG, donatedMsg)
+                    putCharSequence(KEY_ERROR_MSG, errorMsg)
+                    putCharSequence(KEY_CANCELED_MSG, canceledMsg)
                     putStringArrayList(KEY_SKUS, ArrayList(skus))
                 }
             }
