@@ -29,6 +29,7 @@ class MainActivity : AppCompatActivity(), MaterialDonationsDialog.Callback {
                 .addSkus("pizza", "kebab", "pasta")
                 .sortOrder(MaterialDonationsDialog.SORT_ORDER_PRICE_ASC)
                 .show(supportFragmentManager)
+
         }
     }
 
