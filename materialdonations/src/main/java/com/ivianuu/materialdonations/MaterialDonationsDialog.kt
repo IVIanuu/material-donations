@@ -124,23 +124,35 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
     }
 
     override fun onPurchasesUpdated(responseCode: Int, purchases: MutableList<Purchase>?) {
+        val currentDonation = currentDonation ?: return
+
         when (responseCode) {
             BillingClient.BillingResponse.OK -> {
-                if (purchases?.any { it.sku == currentDonation } == true) {
-                    onDonated(currentDonation!!)
-                }
+                val purchase = purchases?.firstOrNull { it.sku == currentDonation }
+
+                if (purchase != null) {
+                    if (arguments!!.getBoolean(KEY_CONSUME, true)) {
+                        try {
+                            billingClient.consumeAsync(purchase.purchaseToken) { responseCode, _ ->
+                                if (responseCode == BillingClient.BillingResponse.OK) {
+                                    onDonated(currentDonation)
+                                    dismiss()
+                                } else {
+                                    onError(Error.UNKNOWN)
+                                    dismiss()
+                                }
+                            }
+                        } catch (e: NotImplementedError) { // todo remove this when billing x supports consumption
+                            onDonated(currentDonation)
+                        }
+                    } else onDonated(currentDonation)
+                } else onError(Error.UNKNOWN)
             }
-            BillingClient.BillingResponse.USER_CANCELED -> {
-                onCanceled()
-            }
-            else -> {
-                onError(Error.PURCHASE_FAILURE)
-            }
+            BillingClient.BillingResponse.USER_CANCELED -> onCanceled()
+            else -> onError(Error.PURCHASE_FAILURE)
         }
 
-        currentDonation = null
-
-        dismiss()
+        this.currentDonation = null
     }
 
     override fun onBillingSetupFinished(responseCode: Int) {
@@ -200,6 +212,7 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
             Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
         }
         callback?.onDonated(sku)
+        dismiss()
     }
 
     private fun onCanceled() {
@@ -230,6 +243,7 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
         private const val KEY_CANCELED_MSG = "canceled_msg"
         private const val KEY_SKUS = "skus"
         private const val KEY_SORT_ORDER = "sort_order"
+        private const val KEY_CONSUME = "consume"
 
         private const val KEY_CURRENT_DONATION = "current_donation"
 
@@ -261,6 +275,7 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
         private var errorMsg: CharSequence? = null
         private var canceledMsg: CharSequence? = null
         private var sortOrder = SORT_ORDER_NONE
+        private var consume = true
 
         private val skus = mutableSetOf<String>()
 
@@ -319,6 +334,11 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
             return this
         }
 
+        fun consume(consume: Boolean): Builder {
+            this.consume = consume
+            return this
+        }
+
         fun create(): MaterialDonationsDialog {
             if (skus.isEmpty()) {
                 throw IllegalStateException("at least 1 sku must be added")
@@ -333,6 +353,7 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
                     putCharSequence(KEY_CANCELED_MSG, canceledMsg)
                     putStringArrayList(KEY_SKUS, ArrayList(skus))
                     putInt(KEY_SORT_ORDER, sortOrder)
+                    putBoolean(KEY_CONSUME, consume)
                 }
             }
         }
