@@ -320,6 +320,10 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
         }
 
         fun create(): MaterialDonationsDialog {
+            if (skus.isEmpty()) {
+                throw IllegalStateException("at least 1 sku must be added")
+            }
+
             return MaterialDonationsDialog().apply {
                 arguments = Bundle().apply {
                     putCharSequence(KEY_TITLE, this@Builder.title)
