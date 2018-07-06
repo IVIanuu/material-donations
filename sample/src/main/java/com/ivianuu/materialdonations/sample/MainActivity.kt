@@ -26,7 +26,8 @@ class MainActivity : AppCompatActivity(), MaterialDonationsDialog.Callback {
                 .donatedMsg("Thanks for the donation!")
                 .canceledMsg("Oh no canceled!")
                 .errorMsg("Something went wrong please try it again!")
-                .addSkus("pizza", "kebab")
+                .addSkus("pizza", "kebab", "pasta")
+                .sortOrder(MaterialDonationsDialog.SORT_ORDER_PRICE_ASC)
                 .show(supportFragmentManager)
         }
     }
@@ -49,14 +50,21 @@ class MainActivity : AppCompatActivity(), MaterialDonationsDialog.Callback {
         billingStore.addProduct(
             SkuDetailsBuilder(
                 sku = "pizza", type = BillingClient.SkuType.INAPP,
-                price = "$0.99", priceAmountMicros = 990000, priceCurrencyCode = "USD",
+                price = "$7.99", priceAmountMicros = 799, priceCurrencyCode = "USD",
                 title = "Pizza", description = "description..").build()
         )
         billingStore.addProduct(
             SkuDetailsBuilder(
                 sku = "kebab", type = BillingClient.SkuType.INAPP,
-                price = "$0.99", priceAmountMicros = 990000, priceCurrencyCode = "USD",
+                price = "$5.99", priceAmountMicros = 599, priceCurrencyCode = "USD",
                 title = "Kebab", description = "description..").build()
+        )
+        billingStore.addProduct(
+            SkuDetailsBuilder(
+                sku = "pasta", type = BillingClient.SkuType.INAPP,
+                price = "$6.99", priceAmountMicros = 699, priceCurrencyCode = "USD",
+                title = "Pasta", description = "description.."
+            ).build()
         )
 
         MaterialDonationsPlugins.billingClientFactory =

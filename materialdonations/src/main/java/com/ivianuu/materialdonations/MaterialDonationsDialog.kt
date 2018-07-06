@@ -177,7 +177,15 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
         billingClient.querySkuDetailsAsync(params) { responseCode, skuDetailsList ->
             if (responseCode == BillingClient.BillingResponse.OK) {
                 if (skuDetailsList.isNotEmpty()) {
-                    epoxyController.setData(skuDetailsList)
+                    val finalList = when (arguments!!.getInt(KEY_SORT_ORDER, SORT_ORDER_NONE)) {
+                        SORT_ORDER_TITLE_ASC -> skuDetailsList.sortedBy { it.title }
+                        SORT_ORDER_TITLE_DESC -> skuDetailsList.sortedByDescending { it.title }
+                        SORT_ORDER_PRICE_ASC -> skuDetailsList.sortedBy { it.priceAmountMicros }
+                        SORT_ORDER_PRICE_DESC -> skuDetailsList.sortedByDescending { it.priceAmountMicros }
+                        else -> skuDetailsList.toList()
+                    }
+
+                    epoxyController.setData(finalList)
                 } else {
                     onError()
                 }
@@ -221,8 +229,15 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
         private const val KEY_ERROR_MSG = "error_msg"
         private const val KEY_CANCELED_MSG = "canceled_msg"
         private const val KEY_SKUS = "skus"
+        private const val KEY_SORT_ORDER = "sort_order"
 
         private const val KEY_CURRENT_DONATION = "current_donation"
+
+        const val SORT_ORDER_NONE = 0
+        const val SORT_ORDER_TITLE_ASC = 1
+        const val SORT_ORDER_TITLE_DESC = 2
+        const val SORT_ORDER_PRICE_ASC = 3
+        const val SORT_ORDER_PRICE_DESC = 4
 
         fun newBuilder(context: Context) = Builder(context)
     }
@@ -240,6 +255,7 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
         private var donatedMsg: CharSequence? = null
         private var errorMsg: CharSequence? = null
         private var canceledMsg: CharSequence? = null
+        private var sortOrder = SORT_ORDER_NONE
 
         private val skus = mutableSetOf<String>()
 
@@ -293,6 +309,11 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
             return this
         }
 
+        fun sortOrder(sortOrder: Int): Builder {
+            this.sortOrder = sortOrder
+            return this
+        }
+
         fun create(): MaterialDonationsDialog {
             return MaterialDonationsDialog().apply {
                 arguments = Bundle().apply {
@@ -302,6 +323,7 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
                     putCharSequence(KEY_ERROR_MSG, errorMsg)
                     putCharSequence(KEY_CANCELED_MSG, canceledMsg)
                     putStringArrayList(KEY_SKUS, ArrayList(skus))
+                    putInt(KEY_SORT_ORDER, sortOrder)
                 }
             }
         }
