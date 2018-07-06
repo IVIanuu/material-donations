@@ -17,23 +17,7 @@ class MainActivity : AppCompatActivity(), MaterialDonationsDialog.Callback {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val billingStore = BillingStore.defaultStore(this)
-        billingStore.clearProducts()
-        billingStore.addProduct(
-            SkuDetailsBuilder(
-                sku = "pizza", type = BillingClient.SkuType.INAPP,
-                price = "$0.99", priceAmountMicros = 990000, priceCurrencyCode = "USD",
-                title = "Pizza", description = "description..").build()
-        )
-        billingStore.addProduct(
-            SkuDetailsBuilder(
-                sku = "kebab", type = BillingClient.SkuType.INAPP,
-                price = "$0.99", priceAmountMicros = 990000, priceCurrencyCode = "USD",
-                title = "Kebab", description = "description..").build()
-        )
-
-        MaterialDonationsPlugins.billingClientFactory =
-                DebugBillingClientFactory()
+        initDebugBillingStuff()
 
         donate.setOnClickListener {
             MaterialDonationsDialog.newBuilder(this)
@@ -54,5 +38,25 @@ class MainActivity : AppCompatActivity(), MaterialDonationsDialog.Callback {
 
     override fun onDonationError() {
         Log.d("testtt", "on donation error")
+    }
+
+    private fun initDebugBillingStuff() {
+        val billingStore = BillingStore.defaultStore(this)
+        billingStore.clearProducts()
+        billingStore.addProduct(
+            SkuDetailsBuilder(
+                sku = "pizza", type = BillingClient.SkuType.INAPP,
+                price = "$0.99", priceAmountMicros = 990000, priceCurrencyCode = "USD",
+                title = "Pizza", description = "description..").build()
+        )
+        billingStore.addProduct(
+            SkuDetailsBuilder(
+                sku = "kebab", type = BillingClient.SkuType.INAPP,
+                price = "$0.99", priceAmountMicros = 990000, priceCurrencyCode = "USD",
+                title = "Kebab", description = "description..").build()
+        )
+
+        MaterialDonationsPlugins.billingClientFactory =
+                DebugBillingClientFactory()
     }
 }

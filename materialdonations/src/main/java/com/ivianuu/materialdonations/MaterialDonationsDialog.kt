@@ -36,45 +36,17 @@ import kotlinx.android.synthetic.main.item_donation.*
 /**
  * Material Donations Dialog
  */
-class MaterialDonationsDialog : DialogFragment() {
+class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
+    BillingClientStateListener {
 
     private var callback: Callback? = null
-
-    private val purchasesUpdateListener =
-        PurchasesUpdatedListener { responseCode, purchases ->
-            callback?.let {
-                if (responseCode == BillingClient.BillingResponse.OK) {
-                    if (purchases?.any { it.sku == currentDonation } == true) {
-                        it.onDonated(currentDonation!!)
-                    } else {
-                        it.onDonationError()
-                    }
-                } else {
-                    it.onDonationError()
-                }
-            }
-            dismiss()
-        }
-
-    private val stateListener = object : BillingClientStateListener {
-        override fun onBillingSetupFinished(responseCode: Int) {
-            if (responseCode != BillingClient.BillingResponse.OK) {
-                callback?.onDonationError()
-                dismiss()
-            }
-        }
-
-        override fun onBillingServiceDisconnected() {
-
-        }
-    }
 
     private lateinit var billingClient: BillingClient
     private lateinit var epoxyController: DonationEpoxyController
 
     private var currentDonation: String? = null
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         callback = activity as? Callback
         if (callback == null) {
@@ -93,9 +65,8 @@ class MaterialDonationsDialog : DialogFragment() {
         }
 
         billingClient = MaterialDonationsPlugins.billingClientFactory
-            .createBillingClient(requireContext(), purchasesUpdateListener)
-
-        billingClient.startConnection(stateListener)
+            .createBillingClient(requireContext(), this)
+            .also { it.startConnection(this) }
 
         val appName = try {
             requireActivity().application.applicationInfo.loadLabel(
@@ -147,6 +118,32 @@ class MaterialDonationsDialog : DialogFragment() {
         billingClient.endConnection()
         callback = null
         super.onDetach()
+    }
+
+    override fun onPurchasesUpdated(responseCode: Int, purchases: MutableList<Purchase>?) {
+        callback?.let {
+            if (responseCode == BillingClient.BillingResponse.OK) {
+                if (purchases?.any { it.sku == currentDonation } == true) {
+                    it.onDonated(currentDonation!!)
+                } else {
+                    it.onDonationError()
+                }
+            } else {
+                it.onDonationError()
+            }
+        }
+
+        dismiss()
+    }
+
+    override fun onBillingSetupFinished(responseCode: Int) {
+        if (responseCode != BillingClient.BillingResponse.OK) {
+            callback?.onDonationError()
+            dismiss()
+        }
+    }
+
+    override fun onBillingServiceDisconnected() {
     }
 
     internal fun skuClicked(sku: SkuDetails) {

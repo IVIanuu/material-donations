@@ -17,7 +17,7 @@ object Versions {
 
     const val epoxy = "2.12.0"
 
-    const val kotlin = "1.2.41"
+    const val kotlin = "1.2.51"
 
     const val mavenGradle = "2.1"
     const val materialDialogs = "0.9.6.0"

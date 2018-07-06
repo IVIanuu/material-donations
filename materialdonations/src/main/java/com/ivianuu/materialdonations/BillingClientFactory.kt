@@ -37,10 +37,8 @@ class DefaultBillingClientFactory : BillingClientFactory {
     override fun createBillingClient(
         context: Context,
         listener: PurchasesUpdatedListener
-    ): BillingClient {
-        return BillingClient.newBuilder(context)
-            .setListener(listener)
-            .build()
-    }
+    ): BillingClient = BillingClient.newBuilder(context)
+        .setListener(listener)
+        .build()
 
 }
