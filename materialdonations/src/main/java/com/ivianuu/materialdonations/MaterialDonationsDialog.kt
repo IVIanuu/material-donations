@@ -52,12 +52,8 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
     override fun onAttach(context: Context) {
         super.onAttach(context)
         callback = activity as? Callback
-        if (callback == null) {
-            callback = parentFragment as? Callback
-        }
-        if (callback == null) {
-            callback = targetFragment as? Callback
-        }
+                ?: parentFragment as? Callback
+                ?: targetFragment as? Callback
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
