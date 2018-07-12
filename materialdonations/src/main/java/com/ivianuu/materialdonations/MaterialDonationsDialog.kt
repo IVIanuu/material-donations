@@ -70,7 +70,7 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
             )
             .negativeText(
                 arguments!!.getString(KEY_NEGATIVE_BUTTON_TEXT)
-                        ?: getString(R.string.default_donation_dialog_title)
+                        ?: getString(android.R.string.cancel)
             )
             .onAny { _, which ->
                 when(which) {
