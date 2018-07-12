@@ -58,13 +58,6 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
             .createBillingClient(requireContext(), this)
         billingClient.startConnection(this)
 
-        val appName = try {
-            requireActivity().application.applicationInfo.loadLabel(
-                requireActivity().packageManager)
-        } catch (e: Exception) {
-            ""
-        }
-
         epoxyController = DonationEpoxyController(this)
     }
 
