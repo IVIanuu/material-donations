@@ -65,7 +65,7 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
             ""
         }
 
-        epoxyController = DonationEpoxyController(this, appName.toString())
+        epoxyController = DonationEpoxyController(this)
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -333,14 +333,13 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
     }
 
     private class DonationEpoxyController(
-        private val dialog: MaterialDonationsDialog,
-        private val appName: String
+        private val dialog: MaterialDonationsDialog
     ) : TypedEpoxyController<List<SkuDetails>>() {
         override fun buildModels(data: List<SkuDetails>) {
             data
                 .distinctBy { it.sku }
                 .forEach {
-                    DonationItemModel(it, dialog, appName)
+                    DonationItemModel(it, dialog)
                         .addTo(this)
                 }
         }
@@ -348,8 +347,7 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
 
     private class DonationItemModel(
         private val sku: SkuDetails,
-        private val dialog: MaterialDonationsDialog,
-        private val appName: String
+        private val dialog: MaterialDonationsDialog
     ) : EpoxyModelWithHolder<DonationItemModel.Holder>() {
 
         init {
@@ -359,7 +357,7 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
         override fun bind(holder: Holder) {
             super.bind(holder)
             with(holder) {
-                title.text = sku.title.replace(" ($appName)", "")
+                title.text = sku.title
                 desc.text = sku.description
                 price.text = sku.price
 
