@@ -74,7 +74,7 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
             )
             .onAny { _, which ->
                 when(which) {
-                    DialogAction.NEGATIVE -> dismissAllowingStateLoss()
+                    DialogAction.NEGATIVE -> dismissSafe()
                     else -> {}
                 }
             }
@@ -186,7 +186,7 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
         arguments!!.getCharSequence(KEY_DONATED_MSG)?.let {
             Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
         }
-        dismissAllowingStateLoss()
+        dismissSafe()
     }
 
     private fun onCanceled() {
@@ -195,14 +195,21 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
         arguments!!.getCharSequence(KEY_CANCELED_MSG)?.let {
             Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
         }
-        dismissAllowingStateLoss()
+        dismissSafe()
     }
 
     private fun onError() {
         arguments!!.getCharSequence(KEY_ERROR_MSG)?.let {
             Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
         }
-        dismissAllowingStateLoss()
+        dismissSafe()
+    }
+
+    private fun dismissSafe() {
+        try {
+            dismissAllowingStateLoss()
+        } catch (e: Exception) {
+        }
     }
 
     companion object {
