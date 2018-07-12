@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
             SkuDetailsBuilder(
                 sku = SKU_DONATION_BEER, type = BillingClient.SkuType.INAPP,
                 price = "$0.99", priceAmountMicros = 990000, priceCurrencyCode = "USD",
-                title = "Beer", description = "description.."
+                title = "Beer (This should go away)", description = "description.."
             ).build()
         )
 
@@ -48,7 +48,8 @@ class MainActivity : AppCompatActivity() {
             SkuDetailsBuilder(
                 sku = SKU_DONATION_BIGGER_MEAL, type = BillingClient.SkuType.INAPP,
                 price = "$0.99", priceAmountMicros = 990000, priceCurrencyCode = "USD",
-                title = "Bigger Meal", description = "description.."
+                title = "Bigger Meal (This should not go away) (But this should go away)",
+                description = "description.."
             ).build()
         )
 

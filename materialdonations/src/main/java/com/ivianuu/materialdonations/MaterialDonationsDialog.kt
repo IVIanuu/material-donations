@@ -23,6 +23,7 @@ import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.support.v4.app.FragmentManager
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.afollestad.materialdialogs.DialogAction
@@ -350,7 +351,8 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
         override fun bind(holder: Holder) {
             super.bind(holder)
             with(holder) {
-                title.text = sku.title
+                title.text = sku.readableTitle
+                    .also { Log.d("testt", "final title -> $it") }
                 desc.text = sku.description
                 price.text = sku.price
 
@@ -368,5 +370,14 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
                 containerView = itemView
             }
         }
+
+        private val SkuDetails.readableTitle: String
+            get() {
+                val title = title
+                if (!title.contains("(") || !title.contains(")")) return title
+                return title
+                    .removeRange(title.indexOfLast { it == '(' }, title.lastIndex + 1)
+                    .trimEnd()
+            }
     }
 }
