@@ -2,7 +2,6 @@ package com.ivianuu.materialdonations.sample
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import com.android.billingclient.api.BillingClient
 import com.ivianuu.materialdonations.MaterialDonationsDialog
 import com.ivianuu.materialdonations.MaterialDonationsPlugins
@@ -11,7 +10,7 @@ import com.pixite.android.billingx.BillingStore
 import com.pixite.android.billingx.SkuDetailsBuilder
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity(), MaterialDonationsDialog.Callback {
+class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,20 +28,7 @@ class MainActivity : AppCompatActivity(), MaterialDonationsDialog.Callback {
                 .addSkus(SKUS)
                 .sortOrder(MaterialDonationsDialog.SORT_ORDER_PRICE_ASC)
                 .show(supportFragmentManager)
-
         }
-    }
-
-    override fun onDonated(sku: String) {
-        Log.d("testtt", "on donated")
-    }
-
-    override fun onDonationCanceled() {
-        Log.d("testtt", "on donation canceled")
-    }
-
-    override fun onDonationError(error: MaterialDonationsDialog.Error) {
-        Log.d("testtt", "on donation error $error")
     }
 
     private fun initDebugBillingStuff() {
@@ -98,8 +84,7 @@ class MainActivity : AppCompatActivity(), MaterialDonationsDialog.Callback {
             ).build()
         )
 
-        MaterialDonationsPlugins.billingClientFactory =
-                DebugBillingClientFactory()
+        MaterialDonationsPlugins.billingClientFactory = DebugBillingClientFactory()
     }
 
     private companion object {

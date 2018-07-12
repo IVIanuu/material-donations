@@ -40,21 +40,12 @@ import kotlinx.android.synthetic.main.item_donation.*
 class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
     BillingClientStateListener {
 
-    private var callback: Callback? = null
-
     private lateinit var billingClient: BillingClient
     private lateinit var epoxyController: DonationEpoxyController
 
     private var currentDonation: String? = null
 
     private var canceled = false
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        callback = activity as? Callback
-                ?: parentFragment as? Callback
-                ?: targetFragment as? Callback
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,7 +56,7 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
 
         billingClient = MaterialDonationsPlugins.billingClientFactory
             .createBillingClient(requireContext(), this)
-            .also { it.startConnection(this) }
+        billingClient.startConnection(this)
 
         val appName = try {
             requireActivity().application.applicationInfo.loadLabel(
@@ -75,8 +66,6 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
         }
 
         epoxyController = DonationEpoxyController(this, appName.toString())
-
-        getDonations()
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -91,10 +80,7 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
             )
             .onAny { _, which ->
                 when(which) {
-                    DialogAction.NEGATIVE -> {
-                        callback?.onDonationCanceled()
-                        dismiss()
-                    }
+                    DialogAction.NEGATIVE -> dismiss()
                     else -> {}
                 }
             }
@@ -115,7 +101,6 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
 
     override fun onDetach() {
         billingClient.endConnection()
-        callback = null
         super.onDetach()
     }
 
@@ -131,21 +116,19 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
                         try {
                             billingClient.consumeAsync(purchase.purchaseToken) { responseCode, _ ->
                                 if (responseCode == BillingClient.BillingResponse.OK) {
-                                    onDonated(currentDonation)
-                                    dismiss()
+                                    onDonated()
                                 } else {
-                                    onError(Error.UNKNOWN)
-                                    dismiss()
+                                    onError()
                                 }
                             }
                         } catch (e: NotImplementedError) { // todo remove this when billing x supports consumption
-                            onDonated(currentDonation)
+                            onDonated()
                         }
-                    } else onDonated(currentDonation)
-                } else onError(Error.UNKNOWN)
+                    } else onDonated()
+                } else onError()
             }
             BillingClient.BillingResponse.USER_CANCELED -> onCanceled()
-            else -> onError(Error.PURCHASE_FAILURE)
+            else -> onError()
         }
 
         this.currentDonation = null
@@ -153,8 +136,10 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
 
     override fun onBillingSetupFinished(responseCode: Int) {
         if (responseCode != BillingClient.BillingResponse.OK) {
-            onError(Error.SETUP_ERROR)
+            onError()
         }
+
+        getDonations()
     }
 
     override fun onBillingServiceDisconnected() {
@@ -170,7 +155,7 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
             == BillingClient.BillingResponse.OK) {
             currentDonation = sku.sku
         } else {
-            onError(Error.FAILED_TO_START_PURCHASE_FLOW)
+            onError()
         }
     }
 
@@ -195,19 +180,18 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
 
                     epoxyController.setData(finalList)
                 } else {
-                    onError(Error.SKUS_EMPTY)
+                    onError()
                 }
             } else {
-                onError(Error.FAILED_TO_LOAD_SKUS)
+                onError()
             }
         }
     }
 
-    private fun onDonated(sku: String) {
+    private fun onDonated() {
         arguments!!.getCharSequence(KEY_DONATED_MSG)?.let {
             Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
         }
-        callback?.onDonated(sku)
         dismiss()
     }
 
@@ -217,12 +201,10 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
         arguments!!.getCharSequence(KEY_CANCELED_MSG)?.let {
             Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
         }
-        callback?.onDonationCanceled()
         dismiss()
     }
 
-    private fun onError(error: Error) {
-        callback?.onDonationError(error)
+    private fun onError() {
         arguments!!.getCharSequence(KEY_ERROR_MSG)?.let {
             Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
         }
@@ -250,17 +232,6 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
         const val SORT_ORDER_PRICE_DESC = 4
 
         fun newBuilder(context: Context) = Builder(context)
-    }
-
-    interface Callback {
-        fun onDonated(sku: String)
-        fun onDonationCanceled()
-        fun onDonationError(error: Error)
-    }
-
-    enum class Error {
-        SETUP_ERROR, CONNECTION_ERROR, SKUS_EMPTY,
-        FAILED_TO_LOAD_SKUS, FAILED_TO_START_PURCHASE_FLOW, PURCHASE_FAILURE, UNKNOWN
     }
 
     class Builder(private val context: Context) {
