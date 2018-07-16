@@ -15,7 +15,7 @@ object Versions {
 
     const val constraintLayout = "1.1.2"
 
-    const val epoxy = "2.12.0"
+    const val epoxy = "2.14.0"
 
     const val kotlin = "1.2.51"
 
