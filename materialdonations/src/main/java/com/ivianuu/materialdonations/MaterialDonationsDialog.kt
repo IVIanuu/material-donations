@@ -247,64 +247,55 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
 
         private val skus = mutableSetOf<String>()
 
-        fun title(title: CharSequence): Builder {
+        fun title(title: CharSequence) = apply {
             this.title = title
-            return this
         }
 
         fun titleRes(titleRes: Int) =
                 title(context.getString(titleRes))
 
-        fun negativeButtonText(negativeButtonText: CharSequence): Builder {
+        fun negativeButtonText(negativeButtonText: CharSequence) = apply {
             this.negativeButtonText = negativeButtonText
-            return this
         }
 
         fun negativeButtonTextRes(negativeButtonTextRes: Int) =
                 negativeButtonText(context.getString(negativeButtonTextRes))
 
-        fun donatedMsg(donatedMsg: CharSequence?): Builder {
+        fun donatedMsg(donatedMsg: CharSequence?) = apply {
             this.donatedMsg = donatedMsg
-            return this
         }
 
         fun donatedMsgRes(donatedMsgRes: Int) =
             donatedMsg(context.getString(donatedMsgRes))
 
-        fun errorMsg(errorMsg: CharSequence?): Builder {
+        fun errorMsg(errorMsg: CharSequence?) = apply {
             this.errorMsg = errorMsg
-            return this
         }
 
         fun errorMsgRes(errorMsgRes: Int) =
             errorMsg(context.getString(errorMsgRes))
 
-        fun canceledMsg(canceledMsg: CharSequence?): Builder {
+        fun canceledMsg(canceledMsg: CharSequence?) = apply {
             this.canceledMsg = canceledMsg
-            return this
         }
 
         fun canceledMsgRes(canceledMsgRes: Int) =
             canceledMsg(context.getString(canceledMsgRes))
 
-        fun addSkus(vararg skus: String): Builder {
+        fun addSkus(vararg skus: String) = apply {
             this.skus.addAll(skus)
-            return this
         }
 
-        fun addSkus(skus: Collection<String>): Builder {
+        fun addSkus(skus: Collection<String>) = apply {
             this.skus.addAll(skus)
-            return this
         }
 
-        fun sortOrder(sortOrder: Int): Builder {
+        fun sortOrder(sortOrder: Int) = apply {
             this.sortOrder = sortOrder
-            return this
         }
 
-        fun consume(consume: Boolean): Builder {
+        fun consume(consume: Boolean) = apply {
             this.consume = consume
-            return this
         }
 
         fun create(): MaterialDonationsDialog {
