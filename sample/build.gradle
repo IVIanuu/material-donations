@@ -38,7 +38,7 @@ android {
 }
 
 dependencies {
-    implementation Deps.supportAppCompat
+    implementation Deps.androidxAppCompat
     implementation project(':materialdonations')
     implementation project(':materialdonations-billingx')
 }

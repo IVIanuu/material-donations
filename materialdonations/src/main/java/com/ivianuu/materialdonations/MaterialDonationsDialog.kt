@@ -20,10 +20,9 @@ import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
-import android.support.v4.app.FragmentManager
-import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.View
 import android.widget.Toast
 import com.afollestad.materialdialogs.DialogAction
@@ -164,11 +163,13 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
         billingClient.querySkuDetailsAsync(params) { responseCode, skuDetailsList ->
             if (responseCode == BillingClient.BillingResponse.OK) {
                 if (skuDetailsList.isNotEmpty()) {
-                    val finalList = when (arguments!!.getInt(KEY_SORT_ORDER, SORT_ORDER_NONE)) {
-                        SORT_ORDER_TITLE_ASC -> skuDetailsList.sortedBy { it.title }
-                        SORT_ORDER_TITLE_DESC -> skuDetailsList.sortedByDescending { it.title }
-                        SORT_ORDER_PRICE_ASC -> skuDetailsList.sortedBy { it.priceAmountMicros }
-                        SORT_ORDER_PRICE_DESC -> skuDetailsList.sortedByDescending { it.priceAmountMicros }
+                    val sortOrderInt = arguments!!.getInt(KEY_SORT_ORDER, SortOrder.NONE.value)
+                    val sortOrder = SortOrder.values().first { it.value == sortOrderInt }
+                    val finalList = when (sortOrder) {
+                        SortOrder.TITLE_ASC -> skuDetailsList.sortedBy { it.title }
+                        SortOrder.TITLE_DESC -> skuDetailsList.sortedByDescending { it.title }
+                        SortOrder.PRICE_ASC -> skuDetailsList.sortedBy { it.priceAmountMicros }
+                        SortOrder.PRICE_DESC -> skuDetailsList.sortedByDescending { it.priceAmountMicros }
                         else -> skuDetailsList.toList()
                     }
 
@@ -212,6 +213,10 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
         }
     }
 
+    enum class SortOrder(val value: Int) {
+        NONE(0), TITLE_ASC(1), TITLE_DESC(2), PRICE_ASC(3), PRICE_DESC(4)
+    }
+
     companion object {
         private const val FRAGMENT_TAG = "MaterialDonationsDialog"
 
@@ -226,12 +231,6 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
 
         private const val KEY_CURRENT_DONATION = "current_donation"
 
-        const val SORT_ORDER_NONE = 0
-        const val SORT_ORDER_TITLE_ASC = 1
-        const val SORT_ORDER_TITLE_DESC = 2
-        const val SORT_ORDER_PRICE_ASC = 3
-        const val SORT_ORDER_PRICE_DESC = 4
-
         fun newBuilder(context: Context) = Builder(context)
     }
 
@@ -242,7 +241,7 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
         private var donatedMsg: CharSequence? = null
         private var errorMsg: CharSequence? = null
         private var canceledMsg: CharSequence? = null
-        private var sortOrder = SORT_ORDER_NONE
+        private var sortOrder = SortOrder.NONE
         private var consume = true
 
         private val skus = mutableSetOf<String>()
@@ -290,7 +289,7 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
             this.skus.addAll(skus)
         }
 
-        fun sortOrder(sortOrder: Int) = apply {
+        fun sortOrder(sortOrder: SortOrder) = apply {
             this.sortOrder = sortOrder
         }
 
@@ -311,13 +310,13 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
                     putCharSequence(KEY_ERROR_MSG, errorMsg)
                     putCharSequence(KEY_CANCELED_MSG, canceledMsg)
                     putStringArrayList(KEY_SKUS, ArrayList(skus))
-                    putInt(KEY_SORT_ORDER, sortOrder)
+                    putInt(KEY_SORT_ORDER, sortOrder.value)
                     putBoolean(KEY_CONSUME, consume)
                 }
             }
         }
 
-        fun show(fm: FragmentManager): MaterialDonationsDialog {
+        fun show(fm: androidx.fragment.app.FragmentManager): MaterialDonationsDialog {
             val dialog = create()
             dialog.show(fm, FRAGMENT_TAG)
             return dialog
@@ -350,7 +349,6 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
             super.bind(holder)
             with(holder) {
                 title.text = sku.readableTitle
-                    .also { Log.d("testt", "final title -> $it") }
                 desc.text = sku.description
                 price.text = sku.price
 

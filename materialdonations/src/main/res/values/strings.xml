@@ -15,8 +15,6 @@
   -->
 
 <resources>
-    <string name="app_name">MaterialDonations</string>
-
     <string name="default_donation_dialog_title">Donate</string>
     <string name="default_donation_dialog_negative_button_text">Cancel</string>
 </resources>

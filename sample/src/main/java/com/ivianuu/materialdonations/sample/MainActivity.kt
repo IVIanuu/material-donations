@@ -1,7 +1,7 @@
 package com.ivianuu.materialdonations.sample
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.android.billingclient.api.BillingClient
 import com.ivianuu.materialdonations.MaterialDonationsDialog
 import com.ivianuu.materialdonations.MaterialDonationsPlugins
@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
                 .canceledMsg("Oh no canceled!")
                 .errorMsg("Something went wrong please try it again!")
                 .addSkus(SKUS)
-                .sortOrder(MaterialDonationsDialog.SORT_ORDER_PRICE_ASC)
+                .sortOrder(MaterialDonationsDialog.SortOrder.PRICE_ASC)
                 .show(supportFragmentManager)
         }
     }

@@ -36,7 +36,7 @@ android {
 
 dependencies {
     api Deps.billingX
-    api Deps.constraintLayout // fix
+    api Deps.constraintLayout // todo remove when fixed
     api project(':materialdonations')
 }
 
