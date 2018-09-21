@@ -20,17 +20,23 @@ import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
+import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import android.view.View
-import android.widget.Toast
 import com.afollestad.materialdialogs.DialogAction
 import com.afollestad.materialdialogs.MaterialDialog
 import com.airbnb.epoxy.EpoxyHolder
 import com.airbnb.epoxy.EpoxyModelWithHolder
 import com.airbnb.epoxy.TypedEpoxyController
-import com.android.billingclient.api.*
+import com.android.billingclient.api.BillingClient
+import com.android.billingclient.api.BillingClientStateListener
+import com.android.billingclient.api.BillingFlowParams
+import com.android.billingclient.api.Purchase
+import com.android.billingclient.api.PurchasesUpdatedListener
+import com.android.billingclient.api.SkuDetails
+import com.android.billingclient.api.SkuDetailsParams
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_donation.*
 
@@ -316,7 +322,7 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
             }
         }
 
-        fun show(fm: androidx.fragment.app.FragmentManager): MaterialDonationsDialog {
+        fun show(fm: FragmentManager): MaterialDonationsDialog {
             val dialog = create()
             dialog.show(fm, FRAGMENT_TAG)
             return dialog
