@@ -20,8 +20,7 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.github.dcendents.android-maven'
 
-group=Versions.groupId
-version=Versions.versionName
+group='com.github.ivianuu'
 
 android {
     compileSdkVersion Versions.compileSdk
@@ -64,12 +63,4 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 artifacts {
     archives sourcesJar
     archives javadocJar
-}
-
-install {
-    repositories.mavenInstaller {
-        pom.groupId = Versions.groupId
-        pom.version = Versions.versionName
-        pom.artifactId = project.name
-    }
 }
