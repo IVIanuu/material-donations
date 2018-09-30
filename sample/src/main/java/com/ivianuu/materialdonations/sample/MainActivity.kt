@@ -27,7 +27,9 @@ class MainActivity : AppCompatActivity() {
                 .errorMsg("Something went wrong please try it again!")
                 .addSkus(SKUS)
                 .sortOrder(MaterialDonationsDialog.SortOrder.PRICE_ASC)
-                .show(supportFragmentManager)
+                .create()
+                .show(supportFragmentManager, "")
+
         }
     }
 
