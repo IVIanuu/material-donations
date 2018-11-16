@@ -38,7 +38,9 @@ android {
     }
 
     androidExtensions {
-        isExperimental = true
+        configure(delegateClosureOf<AndroidExtensionsExtension> {
+            isExperimental = true
+        })
     }
 
     kapt {
