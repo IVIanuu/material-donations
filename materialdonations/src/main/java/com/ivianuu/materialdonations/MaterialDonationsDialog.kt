@@ -23,7 +23,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.DialogAction
 import com.afollestad.materialdialogs.MaterialDialog
@@ -224,109 +223,20 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
     }
 
     companion object {
-        private const val FRAGMENT_TAG = "MaterialDonationsDialog"
+        internal const val FRAGMENT_TAG = "MaterialDonationsDialog"
 
-        private const val KEY_TITLE = "title"
-        private const val KEY_NEGATIVE_BUTTON_TEXT = "negative_button_text"
-        private const val KEY_DONATED_MSG = "donated_msg"
-        private const val KEY_ERROR_MSG = "error_msg"
-        private const val KEY_CANCELED_MSG = "canceled_msg"
-        private const val KEY_SKUS = "skus"
-        private const val KEY_SORT_ORDER = "sort_order"
-        private const val KEY_CONSUME = "consume"
+        internal const val KEY_TITLE = "title"
+        internal const val KEY_NEGATIVE_BUTTON_TEXT = "negative_button_text"
+        internal const val KEY_DONATED_MSG = "donated_msg"
+        internal const val KEY_ERROR_MSG = "error_msg"
+        internal const val KEY_CANCELED_MSG = "canceled_msg"
+        internal const val KEY_SKUS = "skus"
+        internal const val KEY_SORT_ORDER = "sort_order"
+        internal const val KEY_CONSUME = "consume"
 
         private const val KEY_CURRENT_DONATION = "current_donation"
 
-        fun newBuilder(context: Context) = Builder(context)
-    }
-
-    class Builder(private val context: Context) {
-
-        private var title: CharSequence? = null
-        private var negativeButtonText: CharSequence? = null
-        private var donatedMsg: CharSequence? = null
-        private var errorMsg: CharSequence? = null
-        private var canceledMsg: CharSequence? = null
-        private var sortOrder = SortOrder.NONE
-        private var consume = true
-
-        private val skus = mutableSetOf<String>()
-
-        fun title(title: CharSequence) = apply {
-            this.title = title
-        }
-
-        fun titleRes(titleRes: Int) =
-                title(context.getString(titleRes))
-
-        fun negativeButtonText(negativeButtonText: CharSequence) = apply {
-            this.negativeButtonText = negativeButtonText
-        }
-
-        fun negativeButtonTextRes(negativeButtonTextRes: Int) =
-                negativeButtonText(context.getString(negativeButtonTextRes))
-
-        fun donatedMsg(donatedMsg: CharSequence?) = apply {
-            this.donatedMsg = donatedMsg
-        }
-
-        fun donatedMsgRes(donatedMsgRes: Int) =
-            donatedMsg(context.getString(donatedMsgRes))
-
-        fun errorMsg(errorMsg: CharSequence?) = apply {
-            this.errorMsg = errorMsg
-        }
-
-        fun errorMsgRes(errorMsgRes: Int) =
-            errorMsg(context.getString(errorMsgRes))
-
-        fun canceledMsg(canceledMsg: CharSequence?) = apply {
-            this.canceledMsg = canceledMsg
-        }
-
-        fun canceledMsgRes(canceledMsgRes: Int) =
-            canceledMsg(context.getString(canceledMsgRes))
-
-        fun addSkus(vararg skus: String) = apply {
-            this.skus.addAll(skus)
-        }
-
-        fun addSkus(skus: Collection<String>) = apply {
-            this.skus.addAll(skus)
-        }
-
-        fun sortOrder(sortOrder: SortOrder) = apply {
-            this.sortOrder = sortOrder
-        }
-
-        fun consume(consume: Boolean) = apply {
-            this.consume = consume
-        }
-
-        fun create(): MaterialDonationsDialog {
-            if (skus.isEmpty()) {
-                throw IllegalStateException("at least 1 sku must be added")
-            }
-
-            return MaterialDonationsDialog().apply {
-                arguments = Bundle().apply {
-                    putCharSequence(KEY_TITLE, this@Builder.title)
-                    putCharSequence(KEY_NEGATIVE_BUTTON_TEXT, negativeButtonText)
-                    putCharSequence(KEY_DONATED_MSG, donatedMsg)
-                    putCharSequence(KEY_ERROR_MSG, errorMsg)
-                    putCharSequence(KEY_CANCELED_MSG, canceledMsg)
-                    putStringArrayList(KEY_SKUS, ArrayList(skus))
-                    putInt(KEY_SORT_ORDER, sortOrder.value)
-                    putBoolean(KEY_CONSUME, consume)
-                }
-            }
-        }
-
-        fun show(fm: FragmentManager): MaterialDonationsDialog {
-            val dialog = create()
-            dialog.show(fm, FRAGMENT_TAG)
-            return dialog
-        }
+        fun newBuilder(context: Context) = MaterialDonationsDialogBuilder(context)
     }
 
     private class DonationEpoxyController(

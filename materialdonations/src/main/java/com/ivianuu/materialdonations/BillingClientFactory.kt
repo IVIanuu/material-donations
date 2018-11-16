@@ -25,6 +25,9 @@ import com.android.billingclient.api.PurchasesUpdatedListener
  */
 interface BillingClientFactory {
 
+    /**
+     * Returns a new [BillingClient] instance
+     */
     fun createBillingClient(
         context: Context,
         listener: PurchasesUpdatedListener
@@ -32,6 +35,9 @@ interface BillingClientFactory {
 
 }
 
+/**
+ * Default [BillingClientFactory]
+ */
 class DefaultBillingClientFactory : BillingClientFactory {
 
     override fun createBillingClient(
@@ -40,5 +46,4 @@ class DefaultBillingClientFactory : BillingClientFactory {
     ): BillingClient = BillingClient.newBuilder(context)
         .setListener(listener)
         .build()
-
 }

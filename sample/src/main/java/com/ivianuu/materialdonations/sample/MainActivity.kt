@@ -6,6 +6,7 @@ import com.android.billingclient.api.BillingClient
 import com.ivianuu.materialdonations.MaterialDonationsDialog
 import com.ivianuu.materialdonations.MaterialDonationsPlugins
 import com.ivianuu.materialdonations.billingx.DebugBillingClientFactory
+import com.ivianuu.materialdonations.showDonationsDialog
 import com.pixite.android.billingx.BillingStore
 import com.pixite.android.billingx.SkuDetailsBuilder
 import kotlinx.android.synthetic.main.activity_main.*
@@ -19,17 +20,15 @@ class MainActivity : AppCompatActivity() {
         initDebugBillingStuff()
 
         donate.setOnClickListener {
-            MaterialDonationsDialog.newBuilder(this)
-                .title("Donate")
-                .negativeButtonText("Cancel")
-                .donatedMsg("Thanks for the donation!")
-                .canceledMsg("Oh no canceled!")
-                .errorMsg("Something went wrong please try it again!")
-                .addSkus(SKUS)
-                .sortOrder(MaterialDonationsDialog.SortOrder.PRICE_ASC)
-                .create()
-                .show(supportFragmentManager, "")
-
+            showDonationsDialog {
+                title("Donate")
+                negativeButtonText("Cancel")
+                donatedMsg("Thanks for the donation!")
+                canceledMsg("Oh no canceled!")
+                errorMsg("Something went wrong please try it again!")
+                addSkus(SKUS)
+                sortOrder(MaterialDonationsDialog.SortOrder.PRICE_ASC)
+            }
         }
     }
 

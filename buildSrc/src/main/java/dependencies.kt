@@ -2,7 +2,7 @@
 
 object Build {
     const val applicationId = "com.ivianuu.materialdonations.sample"
-    const val buildToolsVersion = "28.0.2"
+    const val buildToolsVersion = "28.0.3"
 
     const val compileSdk = 28
     const val minSdk = 17
@@ -13,12 +13,12 @@ object Build {
 }
 
 object Versions {
-    const val androidGradlePlugin = "3.2.0"
+    const val androidGradlePlugin = "3.2.1"
     const val androidx = "1.0.0"
     const val billingX = "master"
     const val constraintLayout = "1.1.3"
-    const val epoxy = "2.18.0"
-    const val kotlin = "1.3.0-rc-57"
+    const val epoxy = "2.19.0"
+    const val kotlin = "1.3.10"
     const val mavenGradle = "2.1"
     const val materialDialogs = "0.9.6.0"
     const val playBilling = "1.1"

@@ -21,6 +21,9 @@ package com.ivianuu.materialdonations
  */
 object MaterialDonationsPlugins {
 
+    /**
+     * The billing client factory which will be used in [MaterialDonationDialog]s
+     */
     var billingClientFactory: BillingClientFactory = DefaultBillingClientFactory()
 
 }

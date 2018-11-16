@@ -37,12 +37,9 @@ android {
         versionName = Build.versionName
     }
 
-    /*androidExtensions {
-        // isExperimental = true
-        configure(delegateClosureOf<AndroidExtensionsExtension> {
-            isExperimental = true
-        })
-    }*/
+    androidExtensions {
+        isExperimental = true
+    }
 
     kapt {
         correctErrorTypes = true
@@ -51,5 +48,5 @@ android {
 
 dependencies {
     implementation(Deps.androidxAppCompat)
-    implementation(project(":materialdonations"))
+    implementation(project(":materialdonations-billingx"))
 }
