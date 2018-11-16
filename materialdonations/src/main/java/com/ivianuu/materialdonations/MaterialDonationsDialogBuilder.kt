@@ -104,6 +104,18 @@ class MaterialDonationsDialogBuilder internal constructor(private val context: C
     }
 }
 
+inline fun Context.createDonationsDialog(block: MaterialDonationsDialogBuilder.() -> Unit) =
+    MaterialDonationsDialog.newBuilder(this)
+        .apply(block)
+        .create()
+
+inline fun Context.showDonationsDialog(
+    fm: FragmentManager,
+    block: MaterialDonationsDialogBuilder.() -> Unit
+) = MaterialDonationsDialog.newBuilder(this)
+    .apply(block)
+    .show(fm)
+
 inline fun FragmentActivity.createDonationsDialog(block: MaterialDonationsDialogBuilder.() -> Unit) =
     MaterialDonationsDialog.newBuilder(this)
         .apply(block)
