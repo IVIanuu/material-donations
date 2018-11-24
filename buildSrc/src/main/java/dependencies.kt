@@ -20,7 +20,7 @@ object Versions {
     const val epoxy = "2.19.0"
     const val kotlin = "1.3.10"
     const val mavenGradle = "2.1"
-    const val materialDialogs = "0.9.6.0"
+    const val materialDialogs = "2.0.0-rc1"
     const val playBilling = "1.1"
 }
 

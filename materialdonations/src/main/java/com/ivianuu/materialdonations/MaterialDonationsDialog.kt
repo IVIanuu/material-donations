@@ -23,9 +23,8 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.afollestad.materialdialogs.DialogAction
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.list.customListAdapter
 import com.airbnb.epoxy.EpoxyHolder
 import com.airbnb.epoxy.EpoxyModelWithHolder
 import com.airbnb.epoxy.TypedEpoxyController
@@ -37,7 +36,9 @@ import com.android.billingclient.api.PurchasesUpdatedListener
 import com.android.billingclient.api.SkuDetails
 import com.android.billingclient.api.SkuDetailsParams
 import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.item_donation.*
+import kotlinx.android.synthetic.main.item_donation.desc
+import kotlinx.android.synthetic.main.item_donation.price
+import kotlinx.android.synthetic.main.item_donation.title
 
 /**
  * Material Donations Dialog
@@ -67,24 +68,19 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return MaterialDialog.Builder(requireContext())
+        return MaterialDialog(requireContext())
             .title(
-                arguments!!.getString(KEY_TITLE)
+                text = arguments!!.getString(KEY_TITLE)
                         ?: getString(R.string.default_donation_dialog_title)
             )
-            .negativeText(
-                arguments!!.getString(KEY_NEGATIVE_BUTTON_TEXT)
+            .negativeButton(
+                text = arguments!!.getString(KEY_NEGATIVE_BUTTON_TEXT)
                         ?: getString(android.R.string.cancel)
-            )
-            .onAny { _, which ->
-                when(which) {
-                    DialogAction.NEGATIVE -> dismissSafe()
-                    else -> {}
-                }
+            ) {
+                dismissSafe()
             }
-            .adapter(epoxyController.adapter, LinearLayoutManager(requireContext()))
-            .autoDismiss(false)
-            .build()
+            .customListAdapter(epoxyController.adapter)
+            .noAutoDismiss()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
