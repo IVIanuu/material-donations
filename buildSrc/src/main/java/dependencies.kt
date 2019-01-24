@@ -13,12 +13,12 @@ object Build {
 }
 
 object Versions {
-    const val androidGradlePlugin = "3.2.1"
+    const val androidGradlePlugin = "3.3.0"
     const val androidxAppCompat = "1.0.1"
     const val billingX = "master"
     const val constraintLayout = "1.1.3"
-    const val epoxy = "2.19.0"
-    const val kotlin = "1.3.10"
+    const val epoxy = "3.0.0"
+    const val kotlin = "1.3.20"
     const val mavenGradle = "2.1"
     const val materialDialogs = "2.0.0-rc1"
     const val playBilling = "1.1"
