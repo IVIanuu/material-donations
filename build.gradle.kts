@@ -18,7 +18,6 @@ buildscript {
     repositories {
         google()
         jcenter()
-        maven("https://dl.bintray.com/kotlin/kotlin-eap")
         maven("https://dl.bintray.com/drummer-aidan/maven/")
     }
     dependencies {
@@ -32,7 +31,6 @@ allprojects {
     repositories {
         google()
         jcenter()
-        maven("https://dl.bintray.com/kotlin/kotlin-eap")
         maven("https://jitpack.io")
         maven("https://dl.bintray.com/drummer-aidan/maven/")
     }
