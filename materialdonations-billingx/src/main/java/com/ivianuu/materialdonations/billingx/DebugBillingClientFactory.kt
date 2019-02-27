@@ -28,7 +28,9 @@ class DebugBillingClientFactory : BillingClientFactory {
     override fun createBillingClient(
         context: Context,
         listener: PurchasesUpdatedListener
-    ) = DebugBillingClient.newBuilder(context)
-        .setListener(listener)
-        .build()
+    ): DebugBillingClient {
+        return DebugBillingClient.newBuilder(context)
+            .setListener(listener)
+            .build()
+    }
 }

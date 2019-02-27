@@ -16,10 +16,11 @@
 
 package com.ivianuu.materialdonations
 
+import android.annotation.SuppressLint
 import android.app.Dialog
-import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
@@ -36,6 +37,7 @@ import com.android.billingclient.api.PurchasesUpdatedListener
 import com.android.billingclient.api.SkuDetails
 import com.android.billingclient.api.SkuDetailsParams
 import kotlinx.android.extensions.LayoutContainer
+import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.item_donation.desc
 import kotlinx.android.synthetic.main.item_donation.price
 import kotlinx.android.synthetic.main.item_donation.title
@@ -46,11 +48,19 @@ import kotlinx.android.synthetic.main.item_donation.title
 class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
     BillingClientStateListener {
 
-    private lateinit var billingClient: BillingClient
-    private lateinit var epoxyController: DonationEpoxyController
+    private val billingClient by lazy(LazyThreadSafetyMode.NONE) {
+        MaterialDonationsPlugins.billingClientFactory
+            .createBillingClient(requireContext(), this)
+    }
+    private val epoxyController by lazy(LazyThreadSafetyMode.NONE) {
+        DonationEpoxyController(this)
+    }
+
+    private val args by lazy(LazyThreadSafetyMode.NONE) {
+        arguments!!.getParcelable<Args>(KEY_ARGS)!!
+    }
 
     private var currentDonation: String? = null
-
     private var canceled = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,22 +70,15 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
             currentDonation = it.getString(KEY_CURRENT_DONATION)
         }
 
-        billingClient = MaterialDonationsPlugins.billingClientFactory
-            .createBillingClient(requireContext(), this)
         billingClient.startConnection(this)
-
-        epoxyController = DonationEpoxyController(this)
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return MaterialDialog(requireContext())
-            .title(
-                text = arguments!!.getString(KEY_TITLE)
-                        ?: getString(R.string.default_donation_dialog_title)
-            )
+            .title(text = args.title ?: getString(R.string.mdd_default_title))
             .negativeButton(
-                text = arguments!!.getString(KEY_NEGATIVE_BUTTON_TEXT)
-                        ?: getString(android.R.string.cancel)
+                text = args.negativeButtonText
+                    ?: getString(R.string.mdd_default_negative_button_text)
             ) {
                 dismissSafe()
             }
@@ -98,6 +101,7 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
         super.onDetach()
     }
 
+    @SuppressLint("SwitchIntDef")
     override fun onPurchasesUpdated(responseCode: Int, purchases: MutableList<Purchase>?) {
         val currentDonation = currentDonation ?: return
 
@@ -106,7 +110,7 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
                 val purchase = purchases?.firstOrNull { it.sku == currentDonation }
 
                 if (purchase != null) {
-                    if (arguments!!.getBoolean(KEY_CONSUME, true)) {
+                    if (args.consume) {
                         try {
                             billingClient.consumeAsync(purchase.purchaseToken) { responseCode, _ ->
                                 if (responseCode == BillingClient.BillingResponse.OK) {
@@ -154,19 +158,15 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
     }
 
     private fun getDonations() {
-        val skus = arguments!!.getStringArrayList(KEY_SKUS)
-
         val params = SkuDetailsParams.newBuilder()
             .setType(BillingClient.SkuType.INAPP)
-            .setSkusList(skus)
+            .setSkusList(args.skus.toList())
             .build()
 
         billingClient.querySkuDetailsAsync(params) { responseCode, skuDetailsList ->
             if (responseCode == BillingClient.BillingResponse.OK) {
                 if (skuDetailsList.isNotEmpty()) {
-                    val sortOrderInt = arguments!!.getInt(KEY_SORT_ORDER, SortOrder.NONE.value)
-                    val sortOrder = SortOrder.values().first { it.value == sortOrderInt }
-                    val finalList = when (sortOrder) {
+                    val finalList = when (args.sortOrder) {
                         SortOrder.TITLE_ASC -> skuDetailsList.sortedBy { it.title }
                         SortOrder.TITLE_DESC -> skuDetailsList.sortedByDescending { it.title }
                         SortOrder.PRICE_ASC -> skuDetailsList.sortedBy { it.priceAmountMicros }
@@ -185,7 +185,7 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
     }
 
     private fun onDonated() {
-        arguments!!.getCharSequence(KEY_DONATED_MSG)?.let {
+        args.donatedMsg?.let {
             Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
         }
         dismissSafe()
@@ -194,14 +194,14 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
     private fun onCanceled() {
         if (canceled) return
         canceled = true
-        arguments!!.getCharSequence(KEY_CANCELED_MSG)?.let {
+        args.canceledMsg?.let {
             Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
         }
         dismissSafe()
     }
 
     private fun onError() {
-        arguments!!.getCharSequence(KEY_ERROR_MSG)?.let {
+        args.errorMsg?.let {
             Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
         }
         dismissSafe()
@@ -218,21 +218,29 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
         NONE(0), TITLE_ASC(1), TITLE_DESC(2), PRICE_ASC(3), PRICE_DESC(4)
     }
 
+    @Parcelize
+    data class Args(
+        val title: String?,
+        val negativeButtonText: String?,
+        val donatedMsg: String?,
+        val errorMsg: String?,
+        val canceledMsg: String?,
+        val skus: Set<String>,
+        val sortOrder: SortOrder,
+        val consume: Boolean
+    ) : Parcelable
+
     companion object {
         internal const val FRAGMENT_TAG = "MaterialDonationsDialog"
+        internal const val KEY_ARGS = "MaterialDonationsDialog.args"
+        private const val KEY_CURRENT_DONATION = "MaterialDonationsDialog.currentDonation"
 
-        internal const val KEY_TITLE = "title"
-        internal const val KEY_NEGATIVE_BUTTON_TEXT = "negative_button_text"
-        internal const val KEY_DONATED_MSG = "donated_msg"
-        internal const val KEY_ERROR_MSG = "error_msg"
-        internal const val KEY_CANCELED_MSG = "canceled_msg"
-        internal const val KEY_SKUS = "skus"
-        internal const val KEY_SORT_ORDER = "sort_order"
-        internal const val KEY_CONSUME = "consume"
-
-        private const val KEY_CURRENT_DONATION = "current_donation"
-
-        fun newBuilder(context: Context) = MaterialDonationsDialogBuilder(context)
+        fun create(args: Args): MaterialDonationsDialog = MaterialDonationsDialog().apply {
+            require(args.skus.isNotEmpty()) { "At least 1 sku must be added" }
+            arguments = Bundle().apply {
+                putParcelable(MaterialDonationsDialog.KEY_ARGS, args)
+            }
+        }
     }
 
     private class DonationEpoxyController(

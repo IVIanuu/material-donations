@@ -5,19 +5,19 @@ import androidx.appcompat.app.AppCompatActivity
 import com.android.billingclient.api.BillingClient
 import com.ivianuu.materialdonations.MaterialDonationsDialog
 import com.ivianuu.materialdonations.MaterialDonationsPlugins
+import com.ivianuu.materialdonations.billingClientFactory
 import com.ivianuu.materialdonations.billingx.DebugBillingClientFactory
 import com.ivianuu.materialdonations.showDonationsDialog
 import com.pixite.android.billingx.BillingStore
 import com.pixite.android.billingx.SkuDetailsBuilder
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.donate
 
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        initDebugBillingStuff()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        initDebugBillingStuff()
 
         donate.setOnClickListener {
             showDonationsDialog {

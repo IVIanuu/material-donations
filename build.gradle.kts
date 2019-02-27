@@ -18,7 +18,6 @@ buildscript {
     repositories {
         google()
         jcenter()
-        maven("https://dl.bintray.com/drummer-aidan/maven/")
     }
     dependencies {
         classpath(Deps.androidGradlePlugin)
@@ -32,8 +31,6 @@ allprojects {
     repositories {
         google()
         jcenter()
-        maven("https://jitpack.io")
-        maven("https://dl.bintray.com/drummer-aidan/maven/")
     }
 }
 

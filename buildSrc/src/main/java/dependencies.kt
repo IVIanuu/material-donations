@@ -5,7 +5,7 @@ object Build {
     const val buildToolsVersion = "28.0.3"
 
     const val compileSdk = 28
-    const val minSdk = 17
+    const val minSdk = 19
     const val minSdkSample = 21
     const val targetSdk = 28
     const val versionCode = 1
@@ -15,19 +15,19 @@ object Build {
 object Publishing {
     const val groupId = "com.ivianuu.materialdonations"
     const val vcsUrl = "https://github.com/IVIanuu/material-donations"
-    const val version = "${Build.versionName}-dev-1"
+    const val version = "${Build.versionName}-dev-2"
 }
 
 object Versions {
     const val androidGradlePlugin = "3.3.0"
-    const val androidxAppCompat = "1.0.1"
+    const val androidxAppCompat = "1.0.2"
     const val bintray = "1.8.4"
-    const val billingX = "master"
+    const val billingX = "0.8.1"
     const val constraintLayout = "1.1.3"
     const val epoxy = "3.0.0"
-    const val kotlin = "1.3.20"
+    const val kotlin = "1.3.21"
     const val mavenGradle = "2.1"
-    const val materialDialogs = "2.0.0-rc8"
+    const val materialDialogs = "2.0.3"
     const val playBilling = "1.1"
 }
 
@@ -36,7 +36,7 @@ object Deps {
 
     const val androidxAppCompat = "androidx.appcompat:appcompat:${Versions.androidxAppCompat}"
 
-    const val billingX = "com.github.pixiteapps:billingx:${Versions.billingX}"
+    const val billingX = "com.pixiteapps.billingx:billingx:${Versions.billingX}"
 
     const val bintrayGradlePlugin =
         "com.jfrog.bintray.gradle:gradle-bintray-plugin:${Versions.bintray}"

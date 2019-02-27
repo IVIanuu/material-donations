@@ -19,11 +19,15 @@ package com.ivianuu.materialdonations
 /**
  * Material donations plugins
  */
-object MaterialDonationsPlugins {
+object MaterialDonationsPlugins
 
-    /**
-     * The billing client factory which will be used in [MaterialDonationDialog]s
-     */
-    var billingClientFactory: BillingClientFactory = DefaultBillingClientFactory()
+private var _billingClientFactory: BillingClientFactory = DefaultBillingClientFactory()
 
-}
+/**
+ * The billing client factory which will be used in [MaterialDonationsDialog]s
+ */
+var MaterialDonationsPlugins.billingClientFactory
+    get() = _billingClientFactory
+    set(value) {
+        _billingClientFactory = value
+    }

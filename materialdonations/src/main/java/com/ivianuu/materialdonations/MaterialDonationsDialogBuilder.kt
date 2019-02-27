@@ -1,7 +1,6 @@
 package com.ivianuu.materialdonations
 
 import android.content.Context
-import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
@@ -9,92 +8,83 @@ import androidx.fragment.app.FragmentManager
 /**
  * Builder for a [MaterialDonationsDialog]
  */
-class MaterialDonationsDialogBuilder internal constructor(private val context: Context) {
+class MaterialDonationsDialogBuilder @PublishedApi internal constructor(private val context: Context) {
 
-    private var title: CharSequence? = null
-    private var negativeButtonText: CharSequence? = null
-    private var donatedMsg: CharSequence? = null
-    private var errorMsg: CharSequence? = null
-    private var canceledMsg: CharSequence? = null
+    private var title: String? = null
+    private var negativeButtonText: String? = null
+    private var donatedMsg: String? = null
+    private var errorMsg: String? = null
+    private var canceledMsg: String? = null
     private var sortOrder = MaterialDonationsDialog.SortOrder.NONE
     private var consume = true
 
     private val skus = mutableSetOf<String>()
 
-    fun title(title: CharSequence) = apply {
+    fun title(title: String): MaterialDonationsDialogBuilder = apply {
         this.title = title
     }
 
-    fun titleRes(titleRes: Int) =
+    fun title(titleRes: Int): MaterialDonationsDialogBuilder =
         title(context.getString(titleRes))
 
-    fun negativeButtonText(negativeButtonText: CharSequence) = apply {
+    fun negativeButtonText(negativeButtonText: String): MaterialDonationsDialogBuilder = apply {
         this.negativeButtonText = negativeButtonText
     }
 
-    fun negativeButtonTextRes(negativeButtonTextRes: Int) =
+    fun negativeButtonText(negativeButtonTextRes: Int): MaterialDonationsDialogBuilder =
         negativeButtonText(context.getString(negativeButtonTextRes))
 
-    fun donatedMsg(donatedMsg: CharSequence?) = apply {
+    fun donatedMsg(donatedMsg: String?): MaterialDonationsDialogBuilder = apply {
         this.donatedMsg = donatedMsg
     }
 
-    fun donatedMsgRes(donatedMsgRes: Int) =
+    fun donatedMsg(donatedMsgRes: Int): MaterialDonationsDialogBuilder =
         donatedMsg(context.getString(donatedMsgRes))
 
-    fun errorMsg(errorMsg: CharSequence?) = apply {
+    fun errorMsg(errorMsg: String?): MaterialDonationsDialogBuilder = apply {
         this.errorMsg = errorMsg
     }
 
-    fun errorMsgRes(errorMsgRes: Int) =
+    fun errorMsg(errorMsgRes: Int): MaterialDonationsDialogBuilder =
         errorMsg(context.getString(errorMsgRes))
 
-    fun canceledMsg(canceledMsg: CharSequence?) = apply {
+    fun canceledMsg(canceledMsg: String?): MaterialDonationsDialogBuilder = apply {
         this.canceledMsg = canceledMsg
     }
 
-    fun canceledMsgRes(canceledMsgRes: Int) =
+    fun canceledMsg(canceledMsgRes: Int): MaterialDonationsDialogBuilder =
         canceledMsg(context.getString(canceledMsgRes))
 
-    fun addSkus(vararg skus: String) = apply {
+    fun addSkus(vararg skus: String): MaterialDonationsDialogBuilder = apply {
         this.skus.addAll(skus)
     }
 
-    fun addSkus(skus: Collection<String>) = apply {
+    fun addSkus(skus: Iterable<String>): MaterialDonationsDialogBuilder = apply {
         this.skus.addAll(skus)
     }
 
-    fun sortOrder(sortOrder: MaterialDonationsDialog.SortOrder) = apply {
+    fun sortOrder(sortOrder: MaterialDonationsDialog.SortOrder): MaterialDonationsDialogBuilder =
+        apply {
         this.sortOrder = sortOrder
     }
 
-    fun consume(consume: Boolean) = apply {
+    fun consume(consume: Boolean): MaterialDonationsDialogBuilder = apply {
         this.consume = consume
     }
 
     fun create(): MaterialDonationsDialog {
-        if (skus.isEmpty()) {
-            throw IllegalStateException("at least 1 sku must be added")
-        }
-
-        return MaterialDonationsDialog().apply {
-            arguments = Bundle().apply {
-                putCharSequence(
-                    MaterialDonationsDialog.KEY_TITLE,
-                    this@MaterialDonationsDialogBuilder.title
-                )
-                putCharSequence(
-                    MaterialDonationsDialog.KEY_NEGATIVE_BUTTON_TEXT,
-                    negativeButtonText
-                )
-                putCharSequence(MaterialDonationsDialog.KEY_DONATED_MSG, donatedMsg)
-                putCharSequence(MaterialDonationsDialog.KEY_ERROR_MSG, errorMsg)
-                putCharSequence(MaterialDonationsDialog.KEY_CANCELED_MSG, canceledMsg)
-                putStringArrayList(MaterialDonationsDialog.KEY_SKUS, ArrayList(skus))
-                putInt(MaterialDonationsDialog.KEY_SORT_ORDER, sortOrder.value)
-                putBoolean(MaterialDonationsDialog.KEY_CONSUME, consume)
-            }
-        }
+        return MaterialDonationsDialog.create(
+            MaterialDonationsDialog.Args(
+                title,
+                negativeButtonText,
+                donatedMsg,
+                errorMsg,
+                canceledMsg,
+                skus,
+                sortOrder,
+                consume
+            )
+        )
     }
 
     fun show(fm: FragmentManager): MaterialDonationsDialog {
@@ -104,34 +94,26 @@ class MaterialDonationsDialogBuilder internal constructor(private val context: C
     }
 }
 
-inline fun Context.createDonationsDialog(block: MaterialDonationsDialogBuilder.() -> Unit) =
-    MaterialDonationsDialog.newBuilder(this)
+inline fun FragmentActivity.donationsDialog(block: MaterialDonationsDialogBuilder.() -> Unit): MaterialDonationsDialog {
+    return MaterialDonationsDialogBuilder(this)
         .apply(block)
         .create()
+}
 
-inline fun Context.showDonationsDialog(
-    fm: FragmentManager,
-    block: MaterialDonationsDialogBuilder.() -> Unit
-) = MaterialDonationsDialog.newBuilder(this)
-    .apply(block)
-    .show(fm)
-
-inline fun FragmentActivity.createDonationsDialog(block: MaterialDonationsDialogBuilder.() -> Unit) =
-    MaterialDonationsDialog.newBuilder(this)
-        .apply(block)
-        .create()
-
-inline fun FragmentActivity.showDonationsDialog(block: MaterialDonationsDialogBuilder.() -> Unit) =
-    MaterialDonationsDialog.newBuilder(this)
+inline fun FragmentActivity.showDonationsDialog(block: MaterialDonationsDialogBuilder.() -> Unit): MaterialDonationsDialog {
+    return MaterialDonationsDialogBuilder(this)
         .apply(block)
         .show(supportFragmentManager)
+}
 
-inline fun Fragment.createDonationsDialog(block: MaterialDonationsDialogBuilder.() -> Unit) =
-    MaterialDonationsDialog.newBuilder(requireContext())
+inline fun Fragment.donationsDialog(block: MaterialDonationsDialogBuilder.() -> Unit): MaterialDonationsDialog {
+    return MaterialDonationsDialogBuilder(requireContext())
         .apply(block)
         .create()
+}
 
-inline fun Fragment.showDonationsDialog(block: MaterialDonationsDialogBuilder.() -> Unit) =
-    MaterialDonationsDialog.newBuilder(requireContext())
+inline fun Fragment.showDonationsDialog(block: MaterialDonationsDialogBuilder.() -> Unit): MaterialDonationsDialog {
+    return MaterialDonationsDialogBuilder(requireContext())
         .apply(block)
         .show(childFragmentManager)
+}
