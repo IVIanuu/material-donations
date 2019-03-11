@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="72dp"
+    android:layout_height="wrap_content"
+    android:minHeight="72dp"
     android:background="?selectableItemBackground"
     android:orientation="horizontal"
     android:paddingStart="24dp"
@@ -20,11 +21,13 @@
         android:layout_height="wrap_content"
         android:maxLines="1"
         android:textAppearance="?textAppearanceSubtitle1"
+        android:layout_marginEnd="16dp"
         app:layout_constraintBottom_toTopOf="@id/donation_desc"
         app:layout_constraintEnd_toStartOf="@id/donation_price"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:ellipsize="end"
         tools:text="Beer" />
 
     <TextView
@@ -34,11 +37,11 @@
         android:textAppearance="?textAppearanceBody1"
         android:textColor="?android:textColorSecondary"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/donation_price"
+        app:layout_constraintEnd_toEndOf="@id/donation_title"
         app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@id/donation_title"
         app:layout_constraintTop_toBottomOf="@id/donation_title"
-        tools:text="Beer is awesome" />
+        tools:text="Beer is awesome slenfjlgesnlsneglnelgeslkgmklsemklsemklemklmsgmklgmgklsemkl gs kl sklk gskl glk sgkel skleg ls eg lekg" />
 
     <TextView
         android:id="@+id/donation_price"
@@ -48,6 +51,7 @@
         android:layout_marginStart="16dp"
         android:maxLines="1"
         android:textAppearance="?textAppearanceBody2"
+        android:textColor="?android:textColorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
