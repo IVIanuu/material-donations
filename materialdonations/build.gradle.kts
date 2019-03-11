@@ -1,7 +1,3 @@
-import org.gradle.jvm.tasks.Jar
-import org.jetbrains.kotlin.gradle.internal.AndroidExtensionsExtension
-import java.io.File
-
 /*
  * Copyright 2018 Manuel Wrage
  *
@@ -28,6 +24,7 @@ apply(from = "https://raw.githubusercontent.com/IVIanuu/gradle-scripts/master/kt
 apply(from = "https://raw.githubusercontent.com/IVIanuu/gradle-scripts/master/mvn-publish.gradle")
 
 dependencies {
+    api(Deps.constraintLayout)
     api(Deps.epoxy)
     api(Deps.kotlinStdLib)
     api(Deps.materialDialogs)

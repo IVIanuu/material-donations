@@ -15,14 +15,14 @@ object Build {
 object Publishing {
     const val groupId = "com.ivianuu.materialdonations"
     const val vcsUrl = "https://github.com/IVIanuu/material-donations"
-    const val version = "${Build.versionName}-dev-2"
+    const val version = "${Build.versionName}-dev-3"
 }
 
 object Versions {
     const val androidGradlePlugin = "3.3.0"
     const val androidxAppCompat = "1.0.2"
-    const val bintray = "1.8.4"
     const val billingX = "0.8.1"
+    const val bintray = "1.8.4"
     const val constraintLayout = "1.1.3"
     const val epoxy = "3.0.0"
     const val kotlin = "1.3.21"

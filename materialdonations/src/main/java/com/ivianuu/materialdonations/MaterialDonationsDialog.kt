@@ -38,9 +38,9 @@ import com.android.billingclient.api.SkuDetails
 import com.android.billingclient.api.SkuDetailsParams
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.parcel.Parcelize
-import kotlinx.android.synthetic.main.item_donation.desc
-import kotlinx.android.synthetic.main.item_donation.price
-import kotlinx.android.synthetic.main.item_donation.title
+import kotlinx.android.synthetic.main.item_donation.donation_desc
+import kotlinx.android.synthetic.main.item_donation.donation_price
+import kotlinx.android.synthetic.main.item_donation.donation_title
 
 /**
  * Material Donations Dialog
@@ -268,9 +268,9 @@ class MaterialDonationsDialog : DialogFragment(), PurchasesUpdatedListener,
         override fun bind(holder: Holder) {
             super.bind(holder)
             with(holder) {
-                title.text = sku.readableTitle
-                desc.text = sku.description
-                price.text = sku.price
+                donation_title.text = sku.readableTitle
+                donation_desc.text = sku.description
+                donation_price.text = sku.price
 
                 containerView.setOnClickListener { dialog.skuClicked(sku) }
             }

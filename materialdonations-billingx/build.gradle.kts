@@ -1,5 +1,3 @@
-import java.io.File
-
 /*
  * Copyright 2018 Manuel Wrage
  *
@@ -26,6 +24,5 @@ apply(from = "https://raw.githubusercontent.com/IVIanuu/gradle-scripts/master/mv
 
 dependencies {
     api(Deps.billingX)
-    api(Deps.constraintLayout) // todo remove when fixed
     api(project(":materialdonations"))
 }
