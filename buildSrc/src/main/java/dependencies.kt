@@ -20,12 +20,12 @@ object Publishing {
 
 object Versions {
     const val androidGradlePlugin = "3.3.0"
-    const val androidxAppCompat = "1.0.2"
+    const val androidxAppCompat = "1.1.0-alpha04"
     const val billingX = "0.8.1"
     const val bintray = "1.8.4"
-    const val constraintLayout = "1.1.3"
+    const val constraintLayout = "2.0.0-alpha3"
     const val epoxy = "3.0.0"
-    const val kotlin = "1.3.21"
+    const val kotlin = "1.3.30"
     const val mavenGradle = "2.1"
     const val materialDialogs = "2.0.3"
     const val playBilling = "1.1"
